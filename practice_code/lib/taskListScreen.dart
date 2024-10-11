@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:practice_code/models/models.dart';
+import 'package:newsapp/models/models.dart';
 import 'dart:convert';
 
 Future<List<Task>> getApi() async {
   List<Task> data = [];
   var url = Uri.parse(
-      'https://crudcrud.com/api/b989d7098db64f65bde8e3c6e3682d88/unicorns');
+      'https://crudcrud.com/api/6a6ed3123b1a44d29878ae57d3c12780/unicorns');
   var response = await http.get(url);
   var responseBody = jsonDecode(response.body);
 
@@ -18,7 +18,7 @@ Future<List<Task>> getApi() async {
 
 Future<void> addTask(Task task) async {
   var url = Uri.parse(
-      'https://crudcrud.com/api/b989d7098db64f65bde8e3c6e3682d88/unicorns');
+      'https://crudcrud.com/api/6a6ed3123b1a44d29878ae57d3c12780/unicorns');
   var response = await http.post(url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(task.toJson()));
@@ -32,7 +32,7 @@ Future<void> addTask(Task task) async {
 
 Future<void> updateTask(String id, Task task) async {
   var url = Uri.parse(
-      'https://crudcrud.com/api/b989d7098db64f65bde8e3c6e3682d88/unicorns/$id');
+      'https://crudcrud.com/api/6a6ed3123b1a44d29878ae57d3c12780/unicorns/$id');
   var response = await http.put(url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(task.toJson()));
@@ -46,7 +46,7 @@ Future<void> updateTask(String id, Task task) async {
 
 Future<void> deleteTask(String id) async {
   var url = Uri.parse(
-      'https://crudcrud.com/api/b989d7098db64f65bde8e3c6e3682d88/unicorns/$id');
+      'https://crudcrud.com/api/6a6ed3123b1a44d29878ae57d3c12780/unicorns/$id');
   var response = await http.delete(url);
 
   if (response.statusCode == 200) {
@@ -78,7 +78,7 @@ class _HomeState extends State<Home> {
                   title: Text("${snapshot.data![index].name}"),
                   subtitle: Text("Age: ${snapshot.data![index].age}"),
                   trailing: IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: const Icon(Icons.delete),
                     onPressed: () {
                       deleteTask(snapshot.data![index].sId!);
                       setState(() {});
@@ -97,7 +97,7 @@ class _HomeState extends State<Home> {
           addTask(newTask);
           setState(() {});
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

@@ -14,11 +14,11 @@ class Task {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['name'] = this.name;
-    data['age'] = this.age;
-    data['colour'] = this.colour;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['_id'] = sId;
+    data['name'] = name;
+    data['age'] = age;
+    data['colour'] = colour;
     return data;
   }
 }

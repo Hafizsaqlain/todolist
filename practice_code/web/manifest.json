@@ -1,6 +1,6 @@
 {
-    "name": "practice_code",
-    "short_name": "practice_code",
+    "name": "newsapp",
+    "short_name": "newsapp",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

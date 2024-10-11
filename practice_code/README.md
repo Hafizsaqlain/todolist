@@ -1,4 +1,4 @@
-# practice_code
+# newsapp
 
 A new Flutter project.
 
