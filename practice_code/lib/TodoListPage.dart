@@ -76,6 +76,83 @@ class _TodoListPageState extends State<TodoListPage> {
     fetchTasks();
   }
 
+  void showEditTaskDialog(
+      String id, String task, String priority, bool isWishList) {
+    TextEditingController taskController = TextEditingController(text: task);
+    String updatedPriority = priority;
+    bool updatedIsWishList = isWishList;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Edit Task'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: taskController,
+                decoration: InputDecoration(labelText: 'Task'),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: updatedPriority,
+                decoration: InputDecoration(
+                  labelText: "Priority",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                items: <String>['High', 'Medium', 'Low']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    updatedPriority = newValue!;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Checkbox(
+                    value: updatedIsWishList,
+                    onChanged: (bool? newValue) {
+                      setState(() {
+                        updatedIsWishList = newValue!;
+                      });
+                    },
+                  ),
+                  const Text("Add to Wish List"),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                updateTask(id, taskController.text, updatedPriority,
+                    updatedIsWishList);
+                Navigator.of(context).pop();
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     TextEditingController taskController = TextEditingController();
@@ -204,7 +281,11 @@ class _TodoListPageState extends State<TodoListPage> {
                                   icon: const Icon(Icons.edit,
                                       color: Colors.blue),
                                   onPressed: () {
-                                    // Show update dialog here
+                                    showEditTaskDialog(
+                                        task['_id'],
+                                        task['task'],
+                                        task['priority'],
+                                        task['isWishList'] ?? false);
                                   },
                                 ),
                                 IconButton(
@@ -222,7 +303,8 @@ class _TodoListPageState extends State<TodoListPage> {
                     )
                   : const Center(
                       child: Text('No tasks yet!',
-                          style: TextStyle(fontSize: 18, color: Colors.grey)),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
                     ),
             ),
           ],
