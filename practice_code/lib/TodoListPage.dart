@@ -6,7 +6,6 @@ class TodoListPage extends StatefulWidget {
   const TodoListPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _TodoListPageState createState() => _TodoListPageState();
 }
 
@@ -17,7 +16,6 @@ class _TodoListPageState extends State<TodoListPage> {
 
   Future<void> fetchTasks() async {
     final response = await http.get(Uri.parse(apiUrl));
-    print('Response body: ${response.body}');
     if (response.statusCode == 200) {
       try {
         setState(() {
@@ -85,153 +83,150 @@ class _TodoListPageState extends State<TodoListPage> {
     bool isWishList = false; // Default wish list status
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
-        title: const Text("To-Do List"),
+        title: const Text("To-Do List", style: TextStyle(fontSize: 24)),
+        centerTitle: true,
+        backgroundColor: Colors.teal,
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: taskController,
-              decoration: const InputDecoration(
-                labelText: 'Add a Task',
-                border: OutlineInputBorder(),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: taskController,
+                      decoration: InputDecoration(
+                        labelText: 'Add a Task',
+                        labelStyle: TextStyle(color: Colors.teal),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.teal, width: 2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      value: priority,
+                      decoration: InputDecoration(
+                        labelText: "Priority",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      items: <String>['High', 'Medium', 'Low']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          priority = newValue!;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: isWishList,
+                          onChanged: (bool? newValue) {
+                            setState(() {
+                              isWishList = newValue!;
+                            });
+                          },
+                        ),
+                        const Text("Add to Wish List"),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (taskController.text.isNotEmpty) {
+                          addTask(taskController.text, priority, isWishList);
+                          taskController.clear();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 32, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: Colors.teal,
+                      ),
+                      child: const Text('Add Task',
+                          style: TextStyle(fontSize: 16)),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          DropdownButton<String>(
-            value: priority,
-            items: <String>['High', 'Medium', 'Low']
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                priority = newValue!;
-              });
-            },
-          ),
-          Row(
-            children: [
-              Checkbox(
-                value: isWishList,
-                onChanged: (bool? newValue) {
-                  setState(() {
-                    isWishList = newValue!;
-                  });
-                },
-              ),
-              const Text("Add to Wish List"),
-            ],
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (taskController.text.isNotEmpty) {
-                addTask(taskController.text, priority, isWishList);
-                taskController.clear();
-              }
-            },
-            child: const Text('Add Task'),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: tasks.length,
-              itemBuilder: (context, index) {
-                final task = tasks[index];
-                return ListTile(
-                  title: Text(task['task'] ?? 'No task found'),
-                  subtitle: Text('Priority: ${task['priority'] ?? 'N/A'}'),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              TextEditingController updateController =
-                                  TextEditingController();
-                              updateController.text = task['task'] ?? '';
-                              String updatedPriority =
-                                  task['priority'] ?? 'Low';
-                              bool updatedIsWishList =
-                                  task['isWishList'] ?? false;
-
-                              return AlertDialog(
-                                title: const Text("Update Task"),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    TextField(
-                                      controller: updateController,
-                                    ),
-                                    DropdownButton<String>(
-                                      value: updatedPriority,
-                                      items: <String>['High', 'Medium', 'Low']
-                                          .map<DropdownMenuItem<String>>(
-                                              (String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(value),
-                                        );
-                                      }).toList(),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          updatedPriority = newValue!;
-                                        });
-                                      },
-                                    ),
-                                    Row(
-                                      children: [
-                                        Checkbox(
-                                          value: updatedIsWishList,
-                                          onChanged: (bool? newValue) {
-                                            setState(() {
-                                              updatedIsWishList = newValue!;
-                                            });
-                                          },
-                                        ),
-                                        const Text("Add to Wish List"),
-                                      ],
-                                    ),
-                                  ],
+            const SizedBox(height: 16),
+            Expanded(
+              child: tasks.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: tasks.length,
+                      itemBuilder: (context, index) {
+                        final task = tasks[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(16),
+                            title: Text(task['task'] ?? 'No task found',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 18)),
+                            subtitle: Text(
+                                'Priority: ${task['priority'] ?? 'N/A'}',
+                                style: const TextStyle(
+                                    color: Colors.grey, fontSize: 14)),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit,
+                                      color: Colors.blue),
+                                  onPressed: () {
+                                    // Show update dialog here
+                                  },
                                 ),
-                                actions: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      updateTask(
-                                          task['_id'],
-                                          updateController.text,
-                                          updatedPriority,
-                                          updatedIsWishList);
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text("Update"),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          deleteTask(task['_id']);
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              },
+                                IconButton(
+                                  icon: const Icon(Icons.delete,
+                                      color: Colors.red),
+                                  onPressed: () {
+                                    deleteTask(task['_id']);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : const Center(
+                      child: Text('No tasks yet!',
+                          style: TextStyle(fontSize: 18, color: Colors.grey)),
+                    ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
