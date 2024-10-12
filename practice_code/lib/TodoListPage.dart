@@ -86,13 +86,13 @@ class _TodoListPageState extends State<TodoListPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Edit Task'),
+          title: const Text('Edit Task'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: taskController,
-                decoration: InputDecoration(labelText: 'Task'),
+                decoration: const InputDecoration(labelText: 'Task'),
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
@@ -137,7 +137,7 @@ class _TodoListPageState extends State<TodoListPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -145,7 +145,7 @@ class _TodoListPageState extends State<TodoListPage> {
                     updatedIsWishList);
                 Navigator.of(context).pop();
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -183,12 +183,13 @@ class _TodoListPageState extends State<TodoListPage> {
                       controller: taskController,
                       decoration: InputDecoration(
                         labelText: 'Add a Task',
-                        labelStyle: TextStyle(color: Colors.teal),
+                        labelStyle: const TextStyle(color: Colors.teal),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.teal, width: 2),
+                          borderSide:
+                              const BorderSide(color: Colors.teal, width: 2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
@@ -268,7 +269,7 @@ class _TodoListPageState extends State<TodoListPage> {
                           child: ListTile(
                             contentPadding: const EdgeInsets.all(16),
                             title: Text(task['task'] ?? 'No task found',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 18)),
                             subtitle: Text(
                                 'Priority: ${task['priority'] ?? 'N/A'}',
